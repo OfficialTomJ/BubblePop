@@ -17,60 +17,55 @@ struct GameView: View {
             Color(red: 49/255, green: 170/255, blue: 225/255)
                 .ignoresSafeArea()
  
-            VStack {
-                if game.preGameCountdown == nil && !game.isGameOver {
-                    HStack {
-                        Spacer()
-                        VStack(alignment: .center, spacing: 6) {
-                            Text("Player: \(game.playerName)")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.white)
-                                .shadow(radius: 1)
-
-                            Text("Score: \(game.score)")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(radius: 1)
-
-                            Text("Highest Score: \(game.highestScore)")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(game.score >= game.highestScore ? .yellow : .white.opacity(0.6))
-                                .shadow(radius: 1)
-
-                            Text("Time Left: \(game.timeRemaining)")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.white)
-                                .shadow(radius: 1)
-                                .padding(.top, 4)
-                        }
-                        .padding()
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(12)
-                        Spacer()
-                    }
-                    .padding(.top, 20)
-                }
-
-                // Bubbles (only show if countdown is nil)
-                if game.preGameCountdown == nil {
-                    ForEach(game.bubbles) { bubble in
-                        Circle()
-                            .fill(bubble.color.color)
-                            .frame(width: 60, height: 60)
-                            .position(bubble.position)
-                            .animation(.linear(duration: 1.0 / 60.0), value: bubble.position)
-                            .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    game.popBubble(bubble)
-                                }
+            // Bubbles (only show if countdown is nil)
+            if game.preGameCountdown == nil {
+                ForEach(game.bubbles) { bubble in
+                    Circle()
+                        .fill(bubble.color.color)
+                        .frame(width: 60, height: 60)
+                        .position(bubble.position)
+                        .animation(.linear(duration: 1.0 / 60.0), value: bubble.position)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                game.popBubble(bubble)
                             }
-                    }
+                        }
                 }
             }
-            .onAppear {
-                if !game.hasStarted && game.preGameCountdown == nil && !game.isGameOver {
-                    game.prepareGameStart()
+
+            // HUD
+            if game.preGameCountdown == nil && !game.isGameOver {
+                VStack {
+                    VStack(alignment: .center, spacing: 6) {
+                        Text("Player: \(game.playerName)")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .shadow(radius: 1)
+
+                        Text("Score: \(game.score)")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(radius: 1)
+
+                        Text("Highest Score: \(game.highestScore)")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(game.score >= game.highestScore ? .yellow : .white.opacity(0.6))
+                            .shadow(radius: 1)
+
+                        Text("Time Left: \(game.timeRemaining)")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .shadow(radius: 1)
+                            .padding(.top, 4)
+                    }
+                    .padding()
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(12)
+                    .padding(.top, 40)
+
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, alignment: .top)
             }
 
             // Countdown Overlay
@@ -79,14 +74,18 @@ struct GameView: View {
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
 
-                    Text(countdown == 0 ? "Go!" : "\(countdown)")
-                        .font(.system(size: countdown == 0 ? 64 : 72, weight: .bold))
-                        .foregroundColor(.white)
-                        .scaleEffect(countdown == 0 ? 1.4 : 1.2)
-                        .transition(.scale)
-                        .animation(.easeInOut, value: countdown)
+                    VStack {
+                        Spacer()
+                        Text(countdown == 0 ? "Go!" : "\(countdown)")
+                            .font(.system(size: countdown == 0 ? 64 : 72, weight: .bold))
+                            .foregroundColor(.white)
+                            .scaleEffect(countdown == 0 ? 1.4 : 1.2)
+                            .transition(.scale)
+                            .animation(.easeInOut, value: countdown)
+                        Spacer()
+                    }
                 }
-                .zIndex(1)
+                .zIndex(3)
             }
 
             // Game Over Screen
@@ -143,6 +142,11 @@ struct GameView: View {
                     .padding()
                 }
                 .zIndex(2)
+            }
+        }
+        .onAppear {
+            if !game.hasStarted && game.preGameCountdown == nil && !game.isGameOver {
+                game.prepareGameStart()
             }
         }
     }

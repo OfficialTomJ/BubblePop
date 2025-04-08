@@ -160,12 +160,16 @@ class GameState: ObservableObject {
         let screenHeight = UIScreen.main.bounds.height
 
         let diameter: CGFloat = 60
+        let radius = diameter / 2
+        let margin: CGFloat = 10
+        let safeInsetX: CGFloat = screenWidth * 0.1
+        let safeInsetY: CGFloat = screenHeight * 0.15
         var attempts = 0
 
         while newBubbles.count < Int.random(in: 5...max) && attempts < 1000 {
             attempts += 1
-            let x = CGFloat.random(in: diameter...(screenWidth - diameter))
-            let y = CGFloat.random(in: 100...(screenHeight - diameter))
+            let x = CGFloat.random(in: safeInsetX + radius...(screenWidth - safeInsetX - radius))
+            let y = CGFloat.random(in: safeInsetY + radius...(screenHeight - radius - safeInsetY))
             let position = CGPoint(x: x, y: y)
 
             let bubble = Bubble(color: BubbleColor.randomWeighted(), position: position)
@@ -174,7 +178,7 @@ class GameState: ObservableObject {
                 let dx = existing.position.x - bubble.position.x
                 let dy = existing.position.y - bubble.position.y
                 let distance = sqrt(dx * dx + dy * dy)
-                return distance < diameter
+                return distance < diameter + 1 // small buffer to prevent touching
             }
 
             if !overlaps {
