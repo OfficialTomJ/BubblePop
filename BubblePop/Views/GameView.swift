@@ -7,10 +7,12 @@
 
 import SwiftUI
 import ConfettiSwiftUI
+import _SwiftData_SwiftUI
 
 struct GameView: View {
     @EnvironmentObject var game: GameState
     @State private var confettiCounter = 0
+    @Query(sort: \ScoreEntry.score, order: .reverse) var scores: [ScoreEntry]
 
     var body: some View {
         ZStack {
@@ -108,6 +110,22 @@ struct GameView: View {
                         Text("Your Score: \(game.score)")
                             .font(.title)
                             .foregroundColor(.white)
+
+                        Text("Top Scores")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.top, 10)
+
+                        ForEach(scores.prefix(5)) { entry in
+                            HStack {
+                                Text(entry.playerName)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("\(entry.score)")
+                                    .foregroundColor(.yellow)
+                            }
+                            .padding(.horizontal, 40)
+                        }
 
                         Button(action: {
                             game.resetGame()
