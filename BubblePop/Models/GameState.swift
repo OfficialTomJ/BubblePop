@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
 class GameState: ObservableObject {
     @Published var bubbles: [Bubble] = []
@@ -20,6 +21,8 @@ class GameState: ObservableObject {
 
     private var timer: Timer?
     private var lastPoppedColor: BubbleColor?
+    
+    var modelContext: ModelContext?
 
     func startGame() {
             score = 0
@@ -35,6 +38,13 @@ class GameState: ObservableObject {
     func stopGame() {
         timer?.invalidate()
         isGameRunning = false
+        
+        // Save high score
+        if let context = modelContext {
+            let entry = ScoreEntry(playerName: playerName, score: score)
+            context.insert(entry)
+            try? context.save()
+        }
     }
 
     func tick() {

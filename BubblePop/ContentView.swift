@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var game = GameState()
+    @Environment(\.modelContext) var modelContext
 
     var body: some View {
         Group {
@@ -17,6 +18,9 @@ struct ContentView: View {
             } else {
                 StartView()
             }
+        }
+        .onAppear {
+            game.modelContext = modelContext
         }
         .environmentObject(game)
     }

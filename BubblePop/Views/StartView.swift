@@ -27,7 +27,10 @@ struct StartView: View {
                     game.startGame()
                 })
                 .disabled(name.isEmpty)
-
+                
+                NavigationLink("View High Scores", destination: ScoreboardView())
+                    .padding(.top)
+                
                 NavigationLink("Settings", destination: SettingsView())
                     .padding(.top)
             }

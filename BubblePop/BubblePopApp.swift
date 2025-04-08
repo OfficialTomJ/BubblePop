@@ -27,6 +27,6 @@ struct BubblePopApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(for: [ScoreEntry.self])
     }
 }
