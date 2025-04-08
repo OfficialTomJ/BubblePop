@@ -13,11 +13,11 @@ enum BubbleColor: CaseIterable {
 
     var color: Color {
         switch self {
-        case .red: return .red
-        case .pink: return .pink
-        case .green: return .green
-        case .blue: return .blue
-        case .black: return .black
+        case .red: return Color(red: 255/255, green: 115/255, blue: 115/255) // soft red
+        case .pink: return Color(red: 255/255, green: 160/255, blue: 200/255) // pastel pink
+        case .green: return Color(red: 144/255, green: 238/255, blue: 144/255) // light green
+        case .blue: return Color(red: 135/255, green: 206/255, blue: 250/255) // sky blue
+        case .black: return Color(red: 60/255, green: 60/255, blue: 60/255) // soft gray-black
         }
     }
 

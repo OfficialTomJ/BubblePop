@@ -13,19 +13,43 @@ struct GameView: View {
     @State private var confettiCounter = 0
 
     var body: some View {
-        VStack {
-            ZStack {
-                // Game UI
-                VStack {
-                    Text("Player: \(game.playerName)")
-                    Text("Score: \(game.score)")
-                    Text("Highest Score: \(game.highestScore)")
-                        .foregroundColor(game.score >= game.highestScore ? .green : .gray)
-                    Text("Time Left: \(game.timeRemaining)")
-                        .font(.headline)
-                        .padding(.bottom, 10)
+        ZStack {
+            Color(red: 49/255, green: 170/255, blue: 225/255)
+                .ignoresSafeArea()
+ 
+            VStack {
+                if game.preGameCountdown == nil && !game.isGameOver {
+                    HStack {
+                        Spacer()
+                        VStack(alignment: .center, spacing: 6) {
+                            Text("Player: \(game.playerName)")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+                                .shadow(radius: 1)
+
+                            Text("Score: \(game.score)")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(radius: 1)
+
+                            Text("Highest Score: \(game.highestScore)")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(game.score >= game.highestScore ? .yellow : .white.opacity(0.6))
+                                .shadow(radius: 1)
+
+                            Text("Time Left: \(game.timeRemaining)")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+                                .shadow(radius: 1)
+                                .padding(.top, 4)
+                        }
+                        .padding()
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(12)
+                        Spacer()
+                    }
+                    .padding(.top, 20)
                 }
-                .position(x: 100, y: 40)
 
                 // Bubbles (only show if countdown is nil)
                 if game.preGameCountdown == nil {
@@ -42,79 +66,89 @@ struct GameView: View {
                             }
                     }
                 }
-
-                // Countdown Overlay
-                if let countdown = game.preGameCountdown {
-                    ZStack {
-                        Color.black.opacity(0.6)
-                            .edgesIgnoringSafeArea(.all)
-
-                        Text(countdown == 0 ? "Go!" : "\(countdown)")
-                            .font(.system(size: countdown == 0 ? 64 : 72, weight: .bold))
-                            .foregroundColor(.white)
-                            .scaleEffect(countdown == 0 ? 1.4 : 1.2)
-                            .transition(.scale)
-                            .animation(.easeInOut, value: countdown)
-                    }
-                    .zIndex(1)
-                }
-
-                // Game Over Screen
-                if game.isGameOver {
-                    ZStack {
-                        Color.black.opacity(0.8)
-                            .edgesIgnoringSafeArea(.all)
-
-                        VStack(spacing: 20) {
-                            Text("Game Over")
-                                .font(.largeTitle)
-                                .foregroundColor(.white)
-
-                            if game.isNewHighScore {
-                                Text("🎉 New High Score!")
-                                    .font(.title2)
-                                    .foregroundColor(.yellow)
-                            }
-
-                            Text("Your Score: \(game.score)")
-                                .font(.title)
-                                .foregroundColor(.white)
-
-                            Button(action: {
-                                game.resetGame()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    game.prepareGameStart()
-                                }
-                            }) {
-                                Text("Play Again")
-                                    .font(.headline)
-                                    .padding()
-                                    .background(Color.white)
-                                    .foregroundColor(.black)
-                                    .cornerRadius(10)
-                            }
-
-                            Button(action: {
-                                game.resetGame()
-                                game.isInGame = false
-                            }) {
-                                Text("Back to Menu")
-                                    .font(.headline)
-                                    .padding()
-                                    .background(Color.gray.opacity(0.2))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    }
-                    .zIndex(2)
+            }
+            .onAppear {
+                if !game.hasStarted && game.preGameCountdown == nil && !game.isGameOver {
+                    game.prepareGameStart()
                 }
             }
-        }
-        .onAppear {
-            if !game.hasStarted && game.preGameCountdown == nil && !game.isGameOver {
-                game.prepareGameStart()
+
+            // Countdown Overlay
+            if let countdown = game.preGameCountdown {
+                ZStack {
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+
+                    Text(countdown == 0 ? "Go!" : "\(countdown)")
+                        .font(.system(size: countdown == 0 ? 64 : 72, weight: .bold))
+                        .foregroundColor(.white)
+                        .scaleEffect(countdown == 0 ? 1.4 : 1.2)
+                        .transition(.scale)
+                        .animation(.easeInOut, value: countdown)
+                }
+                .zIndex(1)
+            }
+
+            // Game Over Screen
+            if game.isGameOver {
+                ZStack {
+                    Color.black.opacity(0.85)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 25) {
+                        Text("Game Over")
+                            .font(.system(size: 36, weight: .bold))
+                            .foregroundColor(.white)
+
+                        if game.isNewHighScore {
+                            Text("🎉 New High Score!")
+                                .font(.title2)
+                                .foregroundColor(.yellow)
+                        }
+
+                        Text("Your Score: \(game.score)")
+                            .font(.title)
+                            .foregroundColor(.white)
+
+                        Button(action: {
+                            game.resetGame()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                game.prepareGameStart()
+                            }
+                        }) {
+                            Text("Play Again")
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .foregroundColor(.blue)
+                                .cornerRadius(12)
+                                .padding(.horizontal, 40)
+                        }
+
+                        Button(action: {
+                            game.resetGame()
+                            game.isInGame = false
+                        }) {
+                            Text("Back to Menu")
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.gray.opacity(0.3))
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .padding(.horizontal, 40)
+                        }
+                    }
+                    .padding()
+                }
+                .zIndex(2)
             }
         }
     }
+}
+
+#Preview {
+    GameView()
+        .environmentObject(GameState())
 }
