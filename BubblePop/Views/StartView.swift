@@ -10,6 +10,7 @@ import SwiftUI
 struct StartView: View {
     @EnvironmentObject var game: GameState
     @State private var name = ""
+    @State private var isLoading = false
 
     var body: some View {
         NavigationView {
@@ -19,7 +20,7 @@ struct StartView: View {
                 Image("bubble_logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 160)
+                    .frame(maxHeight: 160)
                     .padding(.horizontal, 30)
 
                 VStack(spacing: 20) {
@@ -29,6 +30,7 @@ struct StartView: View {
                         .background(Color.white)
                         .cornerRadius(8)
                         .padding(.horizontal)
+                        .accessibilityIdentifier("nameTextField")
 
                     NavigationLink(destination: GameView(), isActive: $game.isInGame) {
                         EmptyView()
@@ -48,6 +50,7 @@ struct StartView: View {
                             .padding(.horizontal)
                     }
                     .disabled(name.isEmpty)
+                    .accessibilityIdentifier("startGameButton")
 
                     NavigationLink("View High Scores", destination: ScoreboardView())
                         .font(.subheadline)
