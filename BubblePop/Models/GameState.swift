@@ -32,7 +32,6 @@ class GameState: ObservableObject {
 
     func prepareGameStart() {
         guard !hasStarted else { return }
-        hasStarted = true
         preGameCountdown = 3
         var count = 3
 
@@ -42,6 +41,7 @@ class GameState: ObservableObject {
                 self.preGameCountdown = count
             } else {
                 self.preGameCountdown = nil
+                self.hasStarted = true
                 self.startGame()
                 timer.invalidate()
             }
@@ -161,5 +161,17 @@ class GameState: ObservableObject {
         lastPoppedColor = bubble.color
 
         bubbles.remove(at: index)
+    }
+
+    func resetGame() {
+        timer?.invalidate()
+        animationCancellable?.cancel()
+        
+        isGameRunning = false
+        score = 0
+        timeRemaining = gameDuration
+        bubbles = []
+        lastPoppedColor = nil
+        preGameCountdown = nil
     }
 }
