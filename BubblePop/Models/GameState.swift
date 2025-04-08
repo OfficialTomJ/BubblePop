@@ -23,6 +23,9 @@ class GameState: ObservableObject {
     @Published var isInGame: Bool = false
     @Published var showConfetti: Bool = false
     @Published var isNewHighScore: Bool = false
+    
+    @Published var currentComboLength: Int = 0
+    @Published var currentComboColor: BubbleColor? = nil
 
     private var timer: Timer?
     private var lastPoppedColor: BubbleColor?
@@ -193,12 +196,23 @@ class GameState: ObservableObject {
         guard let index = bubbles.firstIndex(where: { $0.id == bubble.id }) else { return }
 
         var points = bubble.color.points
-        if let last = lastPoppedColor, last == bubble.color {
-            points = Int(Double(points) * 1.5.rounded())
+        
+        // Check for combo multiplier
+        if let last = currentComboColor, last == bubble.color {
+            currentComboLength += 1
+            points = Int(Double(points) * 1.5.rounded()) // Apply 1.5x multiplier for consecutive same-color bubbles
+        } else {
+            currentComboColor = bubble.color
+            currentComboLength = 1 // Reset combo for new color
         }
+
+        // Add points to score
         score += points
+
+        // Update last popped color
         lastPoppedColor = bubble.color
 
+        // Remove bubble from screen
         bubbles.remove(at: index)
         
         SoundManager.shared.playSound(named: "pop")
@@ -215,6 +229,8 @@ class GameState: ObservableObject {
         timeRemaining = gameDuration
         bubbles = []
         lastPoppedColor = nil
+        currentComboLength = 0 // Reset combo length
+        currentComboColor = nil // Reset combo color
         preGameCountdown = nil
         showConfetti = false
         isNewHighScore = false
