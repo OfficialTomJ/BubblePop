@@ -38,12 +38,16 @@ class GameState: ObservableObject {
         preGameCountdown = 3
         var count = 3
 
+        SoundManager.shared.playSound(named: "3")
+
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             count -= 1
             if count > 0 {
                 self.preGameCountdown = count
+                SoundManager.shared.playSound(named: "\(count)")
             } else {
                 self.preGameCountdown = nil
+                SoundManager.shared.playSound(named: "start")
                 self.hasStarted = true
                 self.startGame()
                 timer.invalidate()
