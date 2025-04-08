@@ -23,6 +23,8 @@ class GameState: ObservableObject {
     private var lastPoppedColor: BubbleColor?
     
     var modelContext: ModelContext?
+    
+    private var animationCancellable: AnyCancellable?
 
     func startGame() {
             score = 0
@@ -33,11 +35,19 @@ class GameState: ObservableObject {
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 self.tick()
             }
+        
+            // Animation timer (runs ~60fps)
+            animationCancellable = Timer.publish(every: 1.0 / 60.0, on: .main, in: .common)
+                .autoconnect()
+                .sink { _ in
+                    self.updateBubblePositions()
+                }
         }
 
     func stopGame() {
         guard isGameRunning else { return }
         timer?.invalidate()
+        animationCancellable?.cancel()
         isGameRunning = false
         
         // Save high score
@@ -56,6 +66,21 @@ class GameState: ObservableObject {
                 stopGame()
             }
         }
+    
+    func updateBubblePositions() {
+            for bubble in bubbles {
+                let speedMultiplier = 1.0 + (60.0 - Double(timeRemaining)) / 60.0
+                let newX = bubble.position.x + bubble.velocity.width * speedMultiplier
+                let newY = bubble.position.y + bubble.velocity.height * speedMultiplier
+                bubble.position = CGPoint(x: newX, y: newY)
+            }
+
+            // Remove offscreen bubbles
+            bubbles.removeAll {
+                $0.position.x < -30 || $0.position.x > UIScreen.main.bounds.width + 30 ||
+                $0.position.y < -30 || $0.position.y > UIScreen.main.bounds.height + 30
+            }
+        }
 
     func generateBubbles(max: Int = 15) {
         var newBubbles: [Bubble] = []
@@ -63,7 +88,6 @@ class GameState: ObservableObject {
         let screenHeight = UIScreen.main.bounds.height
 
         let diameter: CGFloat = 60
-
         var attempts = 0
 
         while newBubbles.count < Int.random(in: 5...max) && attempts < 1000 {
@@ -72,17 +96,17 @@ class GameState: ObservableObject {
             let y = CGFloat.random(in: 100...(screenHeight - diameter))
             let position = CGPoint(x: x, y: y)
 
-            let newBubble = Bubble(color: BubbleColor.randomWeighted(), position: position)
+            let bubble = Bubble(color: BubbleColor.randomWeighted(), position: position)
 
             let overlaps = newBubbles.contains { existing in
-                let dx = existing.position.x - newBubble.position.x
-                let dy = existing.position.y - newBubble.position.y
+                let dx = existing.position.x - bubble.position.x
+                let dy = existing.position.y - bubble.position.y
                 let distance = sqrt(dx * dx + dy * dy)
                 return distance < diameter
             }
 
             if !overlaps {
-                newBubbles.append(newBubble)
+                newBubbles.append(bubble)
             }
         }
 

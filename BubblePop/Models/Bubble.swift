@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 enum BubbleColor: CaseIterable {
     case red, pink, green, blue, black
@@ -42,8 +43,15 @@ enum BubbleColor: CaseIterable {
     }
 }
 
-struct Bubble: Identifiable {
+class Bubble: Identifiable, ObservableObject {
     let id = UUID()
     let color: BubbleColor
-    var position: CGPoint
+    @Published var position: CGPoint
+    let velocity: CGSize
+
+    init(color: BubbleColor, position: CGPoint, velocity: CGSize = CGSize(width: Double.random(in: -1.5...1.5), height: Double.random(in: -1.5...1.5))) {
+        self.color = color
+        self.position = position
+        self.velocity = velocity
+    }
 }

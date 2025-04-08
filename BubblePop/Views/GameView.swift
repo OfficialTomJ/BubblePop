@@ -26,8 +26,11 @@ struct GameView: View {
                     .fill(bubble.color.color)
                     .frame(width: 60, height: 60)
                     .position(bubble.position)
+                    .animation(.linear(duration: 1.0 / 60.0), value: bubble.position)
                     .onTapGesture {
-                        game.popBubble(bubble)
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            game.popBubble(bubble)
+                        }
                     }
             }
         }
