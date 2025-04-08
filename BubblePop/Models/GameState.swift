@@ -47,13 +47,32 @@ class GameState: ObservableObject {
         }
 
     func generateBubbles(max: Int = 15) {
-        let count = Int.random(in: 5...max)
         var newBubbles: [Bubble] = []
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
 
-        for _ in 0..<count {
-            let color = BubbleColor.randomWeighted()
-            let position = CGPoint(x: Double.random(in: 50...300), y: Double.random(in: 100...600))
-            newBubbles.append(Bubble(color: color, position: position))
+        let diameter: CGFloat = 60
+
+        var attempts = 0
+
+        while newBubbles.count < Int.random(in: 5...max) && attempts < 1000 {
+            attempts += 1
+            let x = CGFloat.random(in: diameter...(screenWidth - diameter))
+            let y = CGFloat.random(in: 100...(screenHeight - diameter))
+            let position = CGPoint(x: x, y: y)
+
+            let newBubble = Bubble(color: BubbleColor.randomWeighted(), position: position)
+
+            let overlaps = newBubbles.contains { existing in
+                let dx = existing.position.x - newBubble.position.x
+                let dy = existing.position.y - newBubble.position.y
+                let distance = sqrt(dx * dx + dy * dy)
+                return distance < diameter
+            }
+
+            if !overlaps {
+                newBubbles.append(newBubble)
+            }
         }
 
         self.bubbles = newBubbles
