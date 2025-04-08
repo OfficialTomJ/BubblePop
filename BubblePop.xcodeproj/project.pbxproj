@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E2520D862DA522A900A4AB6E /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = E2520D852DA522A900A4AB6E /* ConfettiSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E2520D3D2DA4F6C800A4AB6E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2520D862DA522A900A4AB6E /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = BubblePop;
 			packageProductDependencies = (
+				E2520D852DA522A900A4AB6E /* ConfettiSwiftUI */,
 			);
 			productName = BubblePop;
 			productReference = E2520D2D2DA4F6C700A4AB6E /* BubblePop.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = E2520D242DA4F6C700A4AB6E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E2520D842DA522A900A4AB6E /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E2520D2E2DA4F6C700A4AB6E /* Products */;
 			projectDirPath = "";
@@ -558,6 +567,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E2520D842DA522A900A4AB6E /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E2520D852DA522A900A4AB6E /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2520D842DA522A900A4AB6E /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E2520D252DA4F6C700A4AB6E /* Project object */;
 }

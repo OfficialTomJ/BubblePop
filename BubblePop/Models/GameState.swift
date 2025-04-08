@@ -21,6 +21,8 @@ class GameState: ObservableObject {
     @Published var gameDuration: Int = 60
     @Published var maxBubbles: Int = 15
     @Published var isInGame: Bool = false
+    @Published var showConfetti: Bool = false
+    @Published var isNewHighScore: Bool = false
 
     private var timer: Timer?
     private var lastPoppedColor: BubbleColor?
@@ -95,6 +97,7 @@ class GameState: ObservableObject {
         animationCancellable?.cancel()
         isGameRunning = false
         isGameOver = true
+        showConfetti = false
 
         // Save or update high score
         if let context = modelContext {
@@ -109,11 +112,17 @@ class GameState: ObservableObject {
                     if score > existing.score {
                         existing.score = score
                         try? context.save()
+                        SoundManager.shared.playSound(named: "cheer")
+                        self.showConfetti = true
+                        self.isNewHighScore = true
                     }
                 } else {
                     let entry = ScoreEntry(playerName: playerName, score: score)
                     context.insert(entry)
                     try? context.save()
+                    SoundManager.shared.playSound(named: "cheer")
+                    self.showConfetti = true
+                    self.isNewHighScore = true
                 }
             } catch {
                 print("Failed to fetch or update score: \(error)")
@@ -203,5 +212,7 @@ class GameState: ObservableObject {
         bubbles = []
         lastPoppedColor = nil
         preGameCountdown = nil
+        showConfetti = false
+        isNewHighScore = false
     }
 }
