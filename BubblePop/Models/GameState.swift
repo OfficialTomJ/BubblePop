@@ -26,6 +26,27 @@ class GameState: ObservableObject {
     var modelContext: ModelContext?
     
     private var animationCancellable: AnyCancellable?
+    
+    @Published var preGameCountdown: Int? = nil
+    @Published var hasStarted: Bool = false
+
+    func prepareGameStart() {
+        guard !hasStarted else { return }
+        hasStarted = true
+        preGameCountdown = 3
+        var count = 3
+
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            count -= 1
+            if count > 0 {
+                self.preGameCountdown = count
+            } else {
+                self.preGameCountdown = nil
+                self.startGame()
+                timer.invalidate()
+            }
+        }
+    }
 
     func startGame() {
             score = 0

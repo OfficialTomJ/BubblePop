@@ -24,7 +24,7 @@ struct StartView: View {
                 }
                 .simultaneousGesture(TapGesture().onEnded {
                     game.playerName = name
-                    game.startGame()
+                    game.prepareGameStart()
                 })
                 .disabled(name.isEmpty)
                 
