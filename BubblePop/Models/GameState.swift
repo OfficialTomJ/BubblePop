@@ -36,6 +36,7 @@ class GameState: ObservableObject {
         }
 
     func stopGame() {
+        guard isGameRunning else { return }
         timer?.invalidate()
         isGameRunning = false
         
