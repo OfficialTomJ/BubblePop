@@ -183,6 +183,8 @@ class GameState: ObservableObject {
         lastPoppedColor = bubble.color
 
         bubbles.remove(at: index)
+        
+        SoundManager.shared.playSound(named: "pop")
     }
 
     func resetGame() {
