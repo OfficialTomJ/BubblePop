@@ -14,20 +14,23 @@ class GameState: ObservableObject {
     @Published var timeRemaining: Int = 60
     @Published var playerName: String = ""
     @Published var isGameRunning: Bool = false
+    
+    @Published var gameDuration: Int = 60
+    @Published var maxBubbles: Int = 15
 
     private var timer: Timer?
     private var lastPoppedColor: BubbleColor?
 
     func startGame() {
-        score = 0
-        timeRemaining = 60
-        isGameRunning = true
-        generateBubbles()
+            score = 0
+            timeRemaining = gameDuration
+            isGameRunning = true
+            generateBubbles(max: maxBubbles)
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.tick()
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                self.tick()
+            }
         }
-    }
 
     func stopGame() {
         timer?.invalidate()
@@ -35,13 +38,13 @@ class GameState: ObservableObject {
     }
 
     func tick() {
-        if timeRemaining > 0 {
-            timeRemaining -= 1
-            generateBubbles()
-        } else {
-            stopGame()
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+                generateBubbles(max: maxBubbles)
+            } else {
+                stopGame()
+            }
         }
-    }
 
     func generateBubbles(max: Int = 15) {
         let count = Int.random(in: 5...max)
