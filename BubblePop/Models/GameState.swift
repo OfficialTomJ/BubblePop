@@ -91,12 +91,29 @@ class GameState: ObservableObject {
         animationCancellable?.cancel()
         isGameRunning = false
         isGameOver = true
-        
-        // Save high score
+
+        // Save or update high score
         if let context = modelContext {
-            let entry = ScoreEntry(playerName: playerName, score: score)
-            context.insert(entry)
-            try? context.save()
+            do {
+                let currentName = playerName
+                let descriptor = FetchDescriptor<ScoreEntry>(
+                    predicate: #Predicate { $0.playerName == currentName }
+                )
+                let existingScores = try context.fetch(descriptor)
+
+                if let existing = existingScores.first {
+                    if score > existing.score {
+                        existing.score = score
+                        try? context.save()
+                    }
+                } else {
+                    let entry = ScoreEntry(playerName: playerName, score: score)
+                    context.insert(entry)
+                    try? context.save()
+                }
+            } catch {
+                print("Failed to fetch or update score: \(error)")
+            }
         }
     }
 
