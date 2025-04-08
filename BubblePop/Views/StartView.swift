@@ -12,18 +12,27 @@ struct StartView: View {
     @State private var name = ""
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Enter your name:")
-            TextField("Name", text: $name)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Enter your name:")
+                TextField("Name", text: $name)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
 
-            Button("Start Game") {
-                game.playerName = name
-                game.startGame()
+                NavigationLink(destination: GameView()) {
+                    Text("Start Game")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    game.playerName = name
+                    game.startGame()
+                })
+                .disabled(name.isEmpty)
+
+                NavigationLink("Settings", destination: SettingsView())
+                    .padding(.top)
             }
-            .disabled(name.isEmpty)
+            .padding()
+            .navigationTitle("BubblePop")
         }
-        .padding()
     }
 }
