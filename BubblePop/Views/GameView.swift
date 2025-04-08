@@ -12,6 +12,7 @@ import _SwiftData_SwiftUI
 struct GameView: View {
     @EnvironmentObject var game: GameState
     @State private var confettiCounter = 0
+    @State private var poppedBubbleID: UUID?
     @Query(sort: \ScoreEntry.score, order: .reverse) var scores: [ScoreEntry]
 
     var body: some View {
@@ -25,11 +26,14 @@ struct GameView: View {
                     Circle()
                         .fill(bubble.color.color)
                         .frame(width: 60, height: 60)
+                        .scaleEffect(poppedBubbleID == bubble.id ? 0.1 : 1.0)
                         .position(bubble.position)
-                        .animation(.linear(duration: 1.0 / 60.0), value: bubble.position)
+                        .animation(.easeInOut(duration: 0.2), value: poppedBubbleID)
                         .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            poppedBubbleID = bubble.id
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 game.popBubble(bubble)
+                                poppedBubbleID = nil
                             }
                         }
                 }
