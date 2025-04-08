@@ -16,9 +16,11 @@ class GameState: ObservableObject {
     @Published var timeRemaining: Int = 60
     @Published var playerName: String = ""
     @Published var isGameRunning: Bool = false
+    @Published var isGameOver: Bool = false
     
     @Published var gameDuration: Int = 60
     @Published var maxBubbles: Int = 15
+    @Published var isInGame: Bool = false
 
     private var timer: Timer?
     private var lastPoppedColor: BubbleColor?
@@ -32,6 +34,7 @@ class GameState: ObservableObject {
 
     func prepareGameStart() {
         guard !hasStarted else { return }
+        isInGame = true
         preGameCountdown = 3
         var count = 3
 
@@ -52,6 +55,7 @@ class GameState: ObservableObject {
             score = 0
             timeRemaining = gameDuration
             isGameRunning = true
+            isGameOver = false
             generateBubbles(max: maxBubbles)
         
             fetchHighestScore()
@@ -86,6 +90,7 @@ class GameState: ObservableObject {
         timer?.invalidate()
         animationCancellable?.cancel()
         isGameRunning = false
+        isGameOver = true
         
         // Save high score
         if let context = modelContext {
@@ -168,6 +173,8 @@ class GameState: ObservableObject {
         animationCancellable?.cancel()
         
         isGameRunning = false
+        isGameOver = false
+        hasStarted = false
         score = 0
         timeRemaining = gameDuration
         bubbles = []

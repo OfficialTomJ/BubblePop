@@ -55,9 +55,55 @@ struct GameView: View {
                 }
                 .zIndex(1)
             }
+
+            // Game Over Screen
+            if game.isGameOver {
+                ZStack {
+                    Color.black.opacity(0.8)
+                        .edgesIgnoringSafeArea(.all)
+
+                    VStack(spacing: 20) {
+                        Text("Game Over")
+                            .font(.largeTitle)
+                            .foregroundColor(.white)
+
+                        Text("Your Score: \(game.score)")
+                            .font(.title)
+                            .foregroundColor(.white)
+
+                        Button(action: {
+                            game.resetGame()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                game.prepareGameStart()
+                            }
+                        }) {
+                            Text("Play Again")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.white)
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
+                        }
+
+                        Button(action: {
+                            game.resetGame()
+                            game.isInGame = false
+                        }) {
+                            Text("Back to Menu")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.gray.opacity(0.2))
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                }
+                .zIndex(2)
+            }
         }
         .onAppear {
-            if !game.hasStarted && game.preGameCountdown == nil {
+            // Only trigger countdown if this is a fresh session
+            if !game.hasStarted && game.preGameCountdown == nil && !game.isGameOver {
                 game.prepareGameStart()
             }
         }

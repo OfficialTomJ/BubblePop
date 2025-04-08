@@ -19,13 +19,14 @@ struct StartView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
 
-                NavigationLink(destination: GameView()) {
-                    Text("Start Game")
+                NavigationLink(destination: GameView(), isActive: $game.isInGame) {
+                    EmptyView()
                 }
-                .simultaneousGesture(TapGesture().onEnded {
+
+                Button("Start Game") {
                     game.playerName = name
                     game.prepareGameStart()
-                })
+                }
                 .disabled(name.isEmpty)
                 
                 NavigationLink("View High Scores", destination: ScoreboardView())
