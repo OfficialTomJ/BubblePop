@@ -12,6 +12,7 @@ import SwiftData
 class GameState: ObservableObject {
     @Published var bubbles: [Bubble] = []
     @Published var score: Int = 0
+    @Published var highestScore: Int = 0
     @Published var timeRemaining: Int = 60
     @Published var playerName: String = ""
     @Published var isGameRunning: Bool = false
@@ -31,6 +32,8 @@ class GameState: ObservableObject {
             timeRemaining = gameDuration
             isGameRunning = true
             generateBubbles(max: maxBubbles)
+        
+            fetchHighestScore()
 
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 self.tick()
@@ -43,6 +46,19 @@ class GameState: ObservableObject {
                     self.updateBubblePositions()
                 }
         }
+    
+    func fetchHighestScore() {
+        guard let context = modelContext else { return }
+
+        do {
+            // Get all scores and sort manually
+            let allScores = try context.fetch(FetchDescriptor<ScoreEntry>())
+            let top = allScores.sorted { $0.score > $1.score }.first
+            self.highestScore = top?.score ?? 0
+        } catch {
+            print("Failed to fetch scores: \(error)")
+        }
+    }
 
     func stopGame() {
         guard isGameRunning else { return }

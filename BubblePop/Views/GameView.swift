@@ -15,6 +15,8 @@ struct GameView: View {
             VStack {
                 Text("Player: \(game.playerName)")
                 Text("Score: \(game.score)")
+                Text("Highest Score: \(game.highestScore)")
+                        .foregroundColor(game.score >= game.highestScore ? .green : .gray)
                 Text("Time Left: \(game.timeRemaining)")
                     .font(.headline)
                     .padding(.bottom, 10)
