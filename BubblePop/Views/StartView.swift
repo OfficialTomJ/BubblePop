@@ -67,6 +67,7 @@ struct StartView: View {
             .navigationBarHidden(true)
             .background(Color(red: 49/255, green: 170/255, blue: 225/255).ignoresSafeArea())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
